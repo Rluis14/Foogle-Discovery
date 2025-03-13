@@ -1,0 +1,140 @@
+.recipe_editor {
+  max-width: 600px;
+  max-height: 80vh;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  overflow-y: auto;
+}
+.recipe_editor_container{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.397);
+  padding-top: 50px;
+}
+
+.recipe_editor_title {
+  text-align: center;
+  margin: 20px 0;
+  color: #ce5353;
+}
+
+.recipe_form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ingredient_form {
+  gap: 10px;
+}
+
+.form_group {
+  display: flex;
+  flex-direction: column;
+  max-height: max-content;
+}
+
+.form_group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form_group input[type="text"],
+.form_group select,
+.form_group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form_group textarea {
+  resize: vertical;
+}
+
+.form_group input[type="file"] {
+  display: none;
+}
+
+.drop_box {
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.drop_box p {
+  margin: 0;
+  color: #888;
+}
+.preview_img {
+  margin-top: 10px;
+  max-width: 150px;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form_actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+  gap: 1.2em;
+}
+
+.form_actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form_actions button[type="submit"] {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.cancel_button {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.add_ingredient_button {
+  padding: 8px 16px;
+  background-color: #0354aa;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  align-self: center;
+  cursor: pointer;
+}
+
+.remove_ingredient_button {
+  padding: 8px 16px;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ingredient_input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+.delete_button{
+  background-color: #6f1922;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+}
