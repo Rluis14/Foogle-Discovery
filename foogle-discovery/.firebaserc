@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "foogle-612c9"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { admin } from "../FireBase/FireBaseDB";
+import { admin } from "../FireBase/FireBase";
 
 async function verifyToken(req:Request, res:Response, next:NextFunction) {
-    const token = req.headers['authorization'];
+    const token = req.headers.authorization?.split("Bearer ")[1];
     if (!token) {
         return res.status(401).json({ error: "Unauthorized" });;
     }
@@ -14,5 +14,12 @@ async function verifyToken(req:Request, res:Response, next:NextFunction) {
         return res.status(401).json({ error: "Invalid token" });;
     }
 }
-
-module.exports = verifyToken;
+async function generateToken(id:string) {
+    try {
+        const token = await admin.auth().createCustomToken(id);
+        return token;
+    } catch (error: any) {
+        return null;
+    }
+}
+export {generateToken,verifyToken};

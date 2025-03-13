@@ -1,8 +1,9 @@
 import { onRequest } from "firebase-functions/v2/https";
-import db,{admin} from "./FireBase/FireBaseDB";
-import express, { Request, Response, NextFunction } from "express";
+import db,{admin} from "./FireBase/FireBase";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import axios from "axios";
+import {verifyToken} from "./middleware/TokenVerify";
 
 const app = express();
 app.use(express.json());
@@ -10,23 +11,9 @@ app.use(cors({ origin: true }));
 
 const MEALDB_API = "https://www.themealdb.com/api/json/v1/1";
 
-// Middleware to verify Firebase Authentication token
-const verifyAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const token = req.headers.authorization?.split("Bearer ")[1];
-    if (!token) {
-        res.status(401).json({ error: "Unauthorized" });
-        return;
-    }
-
-    try {
-        const decodedToken = await admin.auth().verifyIdToken(token);
-        (req as any).user = decodedToken;
-        return next();
-    } catch (error: any) {
-        res.status(401).json({ error: "Invalid token" });
-        return;
-    }
-};
+app.get("/", (req, res) => {
+    return res.send("Welcome to server");
+});
 
 // Fetch meals from TheMealDB API
 app.get("/meals/search/:query", async (req: Request, res: Response) => {
@@ -40,7 +27,7 @@ app.get("/meals/search/:query", async (req: Request, res: Response) => {
 });
 
 // Save a favorite meal (Authenticated)
-app.post("/favorites", verifyAuth, async (req: Request, res: Response) => {
+app.post("/favorites", verifyToken, async (req: Request, res: Response) => {
     try {
         const { mealId, mealName, mealThumb } = req.body;
         const userId = (req as any).user.uid;
@@ -56,7 +43,7 @@ app.post("/favorites", verifyAuth, async (req: Request, res: Response) => {
 });
 
 // Get user’s saved meals (Authenticated)
-app.get("/favorites", verifyAuth, async (req: Request, res: Response) => {
+app.get("/favorites", verifyToken, async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user.uid;
         const snapshot = await db.collection("users").doc(userId).collection("favorites").get();
@@ -69,7 +56,7 @@ app.get("/favorites", verifyAuth, async (req: Request, res: Response) => {
 });
 
 // Remove meal from favorites (Authenticated)
-app.delete("/favorites/:mealId", verifyAuth, async (req: Request, res: Response) => {
+app.delete("/favorites/:mealId", verifyToken, async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user.uid;
         const mealId = req.params.mealId;
