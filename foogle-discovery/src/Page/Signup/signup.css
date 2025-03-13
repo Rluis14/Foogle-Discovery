@@ -1,0 +1,220 @@
+/* Signup Page Styles */
+.signup-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .signup-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe9d6 100%);
+  }
+  
+  .signup-form {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 500px;
+    animation: formEntrance 0.6s ease-out forwards;
+  }
+  
+  .signup-form h2 {
+    color: #ff6b6b;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+  }
+  
+  .signup-form h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: #ff6b6b;
+    border-radius: 2px;
+  }
+  
+  .form-group {
+    margin-bottom: 1.8rem;
+    position: relative;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.8rem;
+    color: #444;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .form-group input:focus {
+    border-color: #ff9f43;
+    box-shadow: 0 0 0 4px rgba(255, 159, 67, 0.15);
+  }
+  
+  .password-strength {
+    margin-top: 0.8rem;
+  }
+  
+  .strength-indicator {
+    display: flex;
+    gap: 4px;
+    margin-top: 0.5rem;
+  }
+  
+  .strength-bar {
+    flex: 1;
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+  
+  .strength-text {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.5rem;
+  }
+  
+  .strength-0 { background: #ff4444; }
+  .strength-1 { background: #ffbb33; }
+  .strength-2 { background: #00C851; }
+  .strength-3 { background: #00C851; }
+  .strength-4 { background: #00C851; }
+  
+  .terms-group {
+    display: flex;
+    align-items: flex-start;
+    margin: 2rem 0;
+  }
+  
+  .terms-group input {
+    margin-right: 1rem;
+    margin-top: 0.3rem;
+  }
+  
+  .terms-group label {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .terms-group a {
+    color: #ff6b6b;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .signup-button {
+    width: 100%;
+    padding: 1.1rem;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  
+  .signup-button:hover {
+    background: #ff5252;
+    transform: translateY(-2px);
+  }
+  
+  .error-message {
+    background: #fee;
+    color: #e74c3c;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #f5c6cb;
+    animation: shake 0.4s ease-in-out;
+  }
+  
+  .auth-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #666;
+  }
+  
+  .auth-link a {
+    color: #ff6b6b;
+    font-weight: 600;
+    text-decoration: none;
+    position: relative;
+  }
+  
+  .auth-link a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #ff6b6b;
+    transition: width 0.3s ease;
+  }
+  
+  .auth-link a:hover::after {
+    width: 100%;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .signup-form {
+      padding: 2rem;
+    }
+    
+    .signup-form h2 {
+      font-size: 1.8rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .signup-container {
+      padding: 1.5rem;
+    }
+    
+    .signup-form {
+      padding: 1.5rem;
+      border-radius: 16px;
+    }
+    
+    .form-group input {
+      padding: 0.9rem;
+    }
+    
+    .terms-group {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .terms-group input {
+      margin-bottom: 0.5rem;
+    }
+  }
