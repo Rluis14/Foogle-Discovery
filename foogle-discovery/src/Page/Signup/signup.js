@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import zxcvbn from 'zxcvbn';
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../../firebase";
+import zxcvbn from 'zxcvbn'; // Missing import
 import './signup.css';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,47 +16,56 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Fixed password strength check
+  const checkPasswordStrength = (password) => {
+    const result = zxcvbn(password); // Actual zxcvbn call
+    setPasswordScore(result.score);
+  };
+
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(String(email).toLowerCase());
   };
 
-  // Added missing password strength check function
-  const checkPasswordStrength = (password) => {
-    const result = zxcvbn(password);
-    setPasswordScore(result.score);
-  };  
-
-
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    
 
     try {
-      if (!validateEmail(email)) {
-        throw new Error('Please enter a valid email address');
-      }
+      // Validation checks
+      if (!username.trim()) throw new Error('Username is required');
+      if (username.length < 4) throw new Error('Username must be at least 4 characters');
+      if (!validateEmail(email)) throw new Error('Please enter a valid email address');
+      if (password !== confirmPassword) throw new Error('Passwords do not match');
+      if (passwordScore < 2) throw new Error('Password is too weak');
 
-      if (password !== confirmPassword) {
-        throw new Error('Passwords do not match');
-      }
-
-      if (zxcvbn(password).score < 2) {
-        throw new Error('Password is too weak');
-      }
-
+      // Firebase operations
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
+      await updateProfile(userCredential.user, {
+        displayName: username
+      });
+
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        username,
+        email,
+        createdAt: new Date()
+      });
+
+      navigate('/'); // Redirect after successful signup
 
     } catch (error) {
-      // Handle Firebase errors specifically
+      // Streamlined error handling
       switch(error.code) {
         case 'auth/email-already-in-use':
           setError('Email already registered');
           break;
         case 'auth/weak-password':
           setError('Password is too weak');
+          break;
+        case 'auth/invalid-email':
+          setError('Invalid email format');
           break;
         default:
           setError(error.message);
@@ -71,7 +84,23 @@ const Signup = () => {
       <form onSubmit={handleSubmit} className="auth-form">
         <h2>Join Foogle</h2>
         {error && <div className="error-message">{error}</div>}
-        
+
+        <div className="form-group">
+          <label>Username</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter your username"
+            minLength="4"
+            maxLength="20"
+            pattern="[a-zA-Z0-9_]+"
+            title="Only letters, numbers, and underscores"
+            required
+          />
+          <p className="input-hint">4-20 characters, letters, numbers, and underscores only</p>
+        </div>
+
         <div className="form-group">
           <label>Email</label>
           <input
@@ -95,12 +124,12 @@ const Signup = () => {
             placeholder="Create a password"
             required
           />
-          {/* Moved password meter inside form-group */}
+
           <div className="password-meter">
             {[...Array(4)].map((_, i) => (
               <div 
                 key={i}
-                className={`strength-bar ${passwordScore > i ? 'active' : ''}`}
+                className="strength-bar"
                 style={{ 
                   backgroundColor: getBarColor(passwordScore),
                   opacity: password ? 1 : 0.3
@@ -109,6 +138,13 @@ const Signup = () => {
             ))}
           </div>
         </div>
+
+          
+        {password && (
+          <div className="strength-text">
+            Password strength: {['Weak', 'Fair', 'Good', 'Strong'][passwordScore]}
+          </div>
+        )}
 
         <div className="form-group">
           <label>Confirm Password</label>
@@ -129,7 +165,7 @@ const Signup = () => {
           {loading ? (
             <div className="spinner"></div>
           ) : (
-            'Sign Up' // Changed from 'Login' to 'Sign Up'
+            'Sign Up'
           )}
         </button>
         
