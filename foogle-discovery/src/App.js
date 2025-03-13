@@ -12,13 +12,20 @@ import RecipeEditor from "./components/RecipeEditor/RecipeEditor";
 import { AuthProvider } from "./context/AuthContext";
 import SearchPage from './Page/Searchpage/SearchPage';
 import FilterSearchPage from './Page/Filterpage/FilterSearchPage';
+import Login from "./Page/Login/login";
+import Signup from "./Page/Signup/signup";
+import Interaction from "./Page/Interaction/Interaction";
+
 function App() {
   const {user} = useContext(AuthContext);
   return (
       <Router>
         <Routes>
           <Route path="/" element={<Navbar />}>
-            <Route index element={<Home />} />
+          <Route index element={<Home />} />
+          <Route path="login" element={<Login />} />
+          <Route path="signup" element={<Signup />} />
+          <Route path="interaction" element={<Interaction />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/filter" element={<FilterSearchPage />} />
              {/* Protected Routes */}
