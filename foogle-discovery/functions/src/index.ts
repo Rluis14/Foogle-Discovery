@@ -1,12 +1,11 @@
 import { onRequest } from "firebase-functions/v2/https";
-import * as admin from "firebase-admin";
+import db,{admin} from "./FireBase/FireBaseDB";
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import axios from "axios";
 
-admin.initializeApp();
-const db = admin.firestore();
 const app = express();
+app.use(express.json());
 app.use(cors({ origin: true }));
 
 const MEALDB_API = "https://www.themealdb.com/api/json/v1/1";

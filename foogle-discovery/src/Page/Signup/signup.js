@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import zxcvbn from 'zxcvbn';
 import './signup.css';
 
 const Signup = () => {
@@ -19,7 +18,7 @@ const Signup = () => {
 
   // Added missing password strength check function
   const checkPasswordStrength = (password) => {
-    const result = zxcvbn(password);
+    const result = password;
     setPasswordScore(result.score);
   };  
 
@@ -37,13 +36,7 @@ const Signup = () => {
 
       if (password !== confirmPassword) {
         throw new Error('Passwords do not match');
-      }
-
-      if (zxcvbn(password).score < 2) {
-        throw new Error('Password is too weak');
-      }
-
-      
+      }     
 
     } catch (error) {
       // Handle Firebase errors specifically
