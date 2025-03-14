@@ -5,6 +5,7 @@ import cors from "cors";
 import axios from "axios";
 import {verifyToken} from "./middleware/TokenVerify";
 import auth_router from "./routers/Auth";
+import recipe_router from "./routers/Recipe";
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 });
 
 app.use('/auth', auth_router);
+app.use('/recipe', recipe_router);
 
 // Fetch meals from TheMealDB API
 app.get("/meals/search/:query", async (req: Request, res: Response) => {

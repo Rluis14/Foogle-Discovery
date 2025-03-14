@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.checkValidJsonMiddleware = exports.checkValidImgMiddleware = exports.uploadManager = void 0;
 const fileUpload = require('express-fileupload');
 const { createErrRes } = require("../tools/ResTool");
 const MB_TO_BYTE = 1024 * 1024;
@@ -20,6 +21,7 @@ const uploadManager = fileUpload({
         return createErrRes({ res, status_code: 413, error: 'Uploaded image should be less than ' + Math.trunc(MAX_IMAGE_SIZE / MB_TO_BYTE) + 'mb and upload ' + MAX_IMAGE_COUNT + ' images each time' });
     }
 });
+exports.uploadManager = uploadManager;
 /**
  * Checking if uploaded file is valid including:
  *    in right form field (images)
@@ -45,6 +47,7 @@ function checkValidImgMiddleware(req, res, next, required = true) {
     }
     return next();
 }
+exports.checkValidImgMiddleware = checkValidImgMiddleware;
 async function checkValidJsonMiddleware(req, res, next) {
     // check if files exist or file is in the correct field
     if (!req.files || !req.files.json) {
@@ -68,9 +71,5 @@ async function checkValidJsonMiddleware(req, res, next) {
     req.body = JSON.parse(json.data.toString());
     next();
 }
-module.exports = {
-    uploadManager,
-    checkValidImgMiddleware,
-    checkValidJsonMiddleware,
-};
+exports.checkValidJsonMiddleware = checkValidJsonMiddleware;
 //# sourceMappingURL=UploadManager.js.map

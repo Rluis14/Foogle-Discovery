@@ -1,10 +1,11 @@
 import { Router, Request, Response } from "express";
 import { auth } from "../FireBase/FireBase";
-import axios from "axios";
-import { defineSecret } from "firebase-functions/params";
+// import axios from "axios";
+// import { defineString } from "firebase-functions/params";
+// import { defineSecret } from "firebase-functions/params";
 
 const auth_router = Router();
-const api_key = defineSecret("FIREBASE_API_KEY");
+// const api_key = defineString("FIREBASE_API_KEY");
 // Register a new user
 auth_router.post("/sign_up", async (req: Request, res: Response) => {
     const { email, password, user_name } = req.body;
@@ -33,26 +34,28 @@ auth_router.post("/sign_up", async (req: Request, res: Response) => {
 });
 
 // Sign in a user
+//can't check password yet
 auth_router.post("/login", async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { email } = req.body;
+    // const { email, password } = req.body;
 
     try {
         // Use Firebase Authentication REST API to verify email and password
-        const response = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.API_KEY}`, {
-            email,
-            password,
-            returnSecureToken: true
-        });
+        // const response = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${api_key}`, {
+        //     email,
+        //     password,
+        //     returnSecureToken: true
+        // });
 
-        const { idToken, localId } = response.data;
-        const user = await auth.getUser(localId);
-        const token = await auth.createCustomToken(localId, { user_name: user.displayName });
+        // const { idToken, localId } = response.data;
+        const user = await auth.getUserByEmail(email);
+        const token = await auth.createCustomToken(user.uid, { user_name: user.displayName });
 
         res.status(200).json({ 
             message: "User signed in successfully", 
             user, 
             token,
-            idToken 
+             
         });
     } catch (error: any) {
         if (error.response && error.response.data && error.response.data.error) {
