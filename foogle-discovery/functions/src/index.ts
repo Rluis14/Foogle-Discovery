@@ -4,6 +4,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import axios from "axios";
 import {verifyToken} from "./middleware/TokenVerify";
+import auth_router from "./routers/Auth";
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,8 @@ const MEALDB_API = "https://www.themealdb.com/api/json/v1/1";
 app.get("/", (req, res) => {
     return res.send("Welcome to server");
 });
+
+app.use('/auth', auth_router);
 
 // Fetch meals from TheMealDB API
 app.get("/meals/search/:query", async (req: Request, res: Response) => {

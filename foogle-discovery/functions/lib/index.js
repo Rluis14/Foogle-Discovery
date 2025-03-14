@@ -32,6 +32,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const axios_1 = __importDefault(require("axios"));
 const TokenVerify_1 = require("./middleware/TokenVerify");
+const Auth_1 = __importDefault(require("./routers/Auth"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({ origin: true }));
@@ -39,6 +40,7 @@ const MEALDB_API = "https://www.themealdb.com/api/json/v1/1";
 app.get("/", (req, res) => {
     return res.send("Welcome to server");
 });
+app.use('/auth', Auth_1.default);
 // Fetch meals from TheMealDB API
 app.get("/meals/search/:query", async (req, res) => {
     try {

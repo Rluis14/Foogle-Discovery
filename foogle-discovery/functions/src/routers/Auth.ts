@@ -1,9 +1,10 @@
 import { Router, Request, Response } from "express";
 import { auth } from "../FireBase/FireBase";
 import axios from "axios";
+import { defineSecret } from "firebase-functions/params";
 
 const auth_router = Router();
-
+const api_key = defineSecret("FIREBASE_API_KEY");
 // Register a new user
 auth_router.post("/sign_up", async (req: Request, res: Response) => {
     const { email, password, user_name } = req.body;
@@ -37,7 +38,7 @@ auth_router.post("/login", async (req: Request, res: Response) => {
 
     try {
         // Use Firebase Authentication REST API to verify email and password
-        const response = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAtW7fszphx2QunGFf6hqdYs1V8P_j5cK8`, {
+        const response = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.API_KEY}`, {
             email,
             password,
             returnSecureToken: true
@@ -50,7 +51,7 @@ auth_router.post("/login", async (req: Request, res: Response) => {
         res.status(200).json({ 
             message: "User signed in successfully", 
             user, 
-            token, 
+            token,
             idToken 
         });
     } catch (error: any) {
