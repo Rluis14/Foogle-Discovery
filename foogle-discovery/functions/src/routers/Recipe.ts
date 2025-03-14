@@ -143,6 +143,18 @@ recipe_router.delete("/:id", verifyToken, async (req: Request, res: Response) =>
     return;
 });
 
+// Function to calculate average rating based on recipe_id
+async function calculateAverageRating(recipeId: string): Promise<number> {
+    const reviewsSnapshot = await db.collection("Review").where("recipe_id", "==", recipeId).get();
+    const reviews = reviewsSnapshot.docs.map(doc => doc.data());
+
+    const averageRating = reviews.length > 0 
+        ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+        : 0;
+
+    return averageRating;
+}
+
 // Get recipes by combined criteria
 recipe_router.get("/search", async (req: Request, res: Response) => {
     const { name, category, area } = req.query;
@@ -161,7 +173,15 @@ recipe_router.get("/search", async (req: Request, res: Response) => {
         }
 
         const snapshot = await query.get();
-        const recipes = snapshot.docs.map(doc => doc.data());
+        const recipes = await Promise.all(snapshot.docs.map(async doc => {
+            const recipeData = doc.data();
+            const averageRating = await calculateAverageRating(doc.id);
+            return { 
+                id: doc.id, 
+                ...recipeData, 
+                average_rating: averageRating 
+            };
+        }));
         res.status(200).json(recipes);
     } catch (error: any) {
         res.status(500).json({ error: error.message });
@@ -177,7 +197,16 @@ recipe_router.get("/favorites", verifyToken, async (req: Request, res: Response)
         const userDoc = await db.collection("User").doc(userId).get();
         const recipe_ids = userDoc.data()?.saved_recipe_ids || []; 
         const recipesSnapshot = await db.collection("Recipe").where(admin.firestore.FieldPath.documentId(), "in", recipe_ids).get();
-        const recipes = recipesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(),saved:true }));
+        const recipes = await Promise.all(recipesSnapshot.docs.map(async doc => {
+            const recipeData = doc.data();
+            const averageRating = await calculateAverageRating(doc.id);
+            return { 
+                id: doc.id, 
+                ...recipeData, 
+                average_rating: averageRating,
+                saved: true 
+            };
+        }));
         res.status(200).json(recipes);
     } catch (error: any) {
         res.status(500).json({ error: error.message });
@@ -186,12 +215,16 @@ recipe_router.get("/favorites", verifyToken, async (req: Request, res: Response)
 });
 
 // Get list of user-owned recipes
-recipe_router.get("/my_recipes", verifyToken, async (req: Request, res: Response) => {
-    const userId = (req as any).user.uid;
-
+recipe_router.get("/user/:id", async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const userId = id;
     try {
         const recipesSnapshot = await db.collection("Recipe").where("user_id", "==", userId).get();
-        const recipes = recipesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const recipes = await Promise.all(recipesSnapshot.docs.map(async doc => {
+            const recipeData = doc.data();
+            const averageRating = await calculateAverageRating(doc.id);
+            return { id: doc.id, ...recipeData, average_rating: averageRating };
+        }));
         res.status(200).json(recipes);
     } catch (error: any) {
         res.status(500).json({ error: error.message });
@@ -211,23 +244,16 @@ recipe_router.get("/:id", (...params)=>verifyToken(...params,false), async (req:
         }
 
         const recipeData = recipeDoc.data();
+        const averageRating = await calculateAverageRating(id);
 
-        // Fetch reviews for the recipe
-        const reviewsSnapshot = await db.collection("Review").where("recipe_id", "==", id).get();
-        const reviews = reviewsSnapshot.docs.map(doc => doc.data());
-        
-        // Calculate the average rating
-        const averageRating = reviews.length > 0 
-            ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
-            : 0;
         // Check if the recipe is in the user's favorites
         let saved = false;
         if(userId){
             const userSnapshot = await db.collection("User").doc(userId).get();
-            saved = userSnapshot.data()?.saved_recipe_ids.includes(id)||false;
+            saved = userSnapshot.data()?.saved_recipe_ids.includes(id) || false;
         }
 
-        res.status(200).json({ id: recipeDoc.id, ...recipeData, average_rating: averageRating, reviews, saved });
+        res.status(200).json({ id: recipeDoc.id, ...recipeData, average_rating: averageRating, saved });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }

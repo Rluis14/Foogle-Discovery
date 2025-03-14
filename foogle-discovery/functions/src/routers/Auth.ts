@@ -28,8 +28,11 @@ auth_router.post("/sign_up", async (req: Request, res: Response) => {
 
         res.status(201).json({ 
             message: "User registered successfully", 
-            user: userRecord, 
-            token 
+            token,
+            user:{
+                id:userRecord.uid,
+                user_name
+            } 
         });
     } catch (error: any) {
         if (error.code === 'auth/email-already-exists') {
@@ -62,7 +65,10 @@ auth_router.post("/login", async (req: Request, res: Response) => {
 
         res.status(200).json({ 
             message: "User signed in successfully", 
-            user, 
+            user:{
+                id:user.uid,
+                user_name:user.displayName
+            }, 
             token 
         });
     } catch (error: any) {

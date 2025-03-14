@@ -109,6 +109,7 @@ review_router.put("/:id", verifyToken, uploadManager, (...params)=>checkValidImg
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
+    return;
 });
 
 // Delete a review
@@ -119,6 +120,7 @@ review_router.delete("/:id", verifyToken, async (req: Request, res: Response) =>
     try {
         const reviewRef = db.collection("Review").doc(id);
         const reviewDoc = await reviewRef.get();
+        //delete image from storage
         const data = reviewDoc.data();
         const bucket = storage.bucket();
         const fileDelete = bucket.file(`images/${data?.img_id}`);
@@ -139,11 +141,10 @@ review_router.delete("/:id", verifyToken, async (req: Request, res: Response) =>
 });
 
 // Get reviews by recipe ID
-review_router.get("/recipe/:recipe_id", async (req: Request, res: Response) => {
-    const { recipe_id } = req.params;
-
+review_router.get("/recipe/:id", async (req: Request, res: Response) => {
+    const { id } = req.params;
     try {
-        const snapshot = await db.collection("Review").where("recipe_id", "==", recipe_id).get();
+        const snapshot = await db.collection("Review").where("recipe_id", "==", id).get();
         const reviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.status(200).json(reviews);
     } catch (error: any) {
@@ -152,11 +153,10 @@ review_router.get("/recipe/:recipe_id", async (req: Request, res: Response) => {
 });
 
 // Get reviews by user ID
-review_router.get("/user/:user_id", async (req: Request, res: Response) => {
-    const { user_id } = req.params;
-
+review_router.get("/user/:id", async (req: Request, res: Response) => {
+    const { id } = req.params;
     try {
-        const snapshot = await db.collection("Review").where("user_id", "==", user_id).get();
+        const snapshot = await db.collection("Review").where("user_id", "==", id).get();
         const reviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         res.status(200).json(reviews);
     } catch (error: any) {

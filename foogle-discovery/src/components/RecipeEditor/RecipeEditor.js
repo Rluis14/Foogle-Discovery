@@ -78,12 +78,11 @@ const RecipeEditor = ({
       imgSrc,
       ingredients,
       category,
-      selectionArea
+      selectionArea,
+      id:recipe?.id,
     };
-    console.log(newRecipe);
     onAddRecipe(newRecipe);
     onExit();
-    // Add your logic here
   };
 
   const onCancel = () => {

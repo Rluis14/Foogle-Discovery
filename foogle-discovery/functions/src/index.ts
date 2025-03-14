@@ -7,6 +7,7 @@ import {verifyToken} from "./middleware/TokenVerify";
 import auth_router from "./routers/Auth";
 import recipe_router from "./routers/Recipe";
 import review_router from "./routers/Review";
+import user_router from "./routers/User";
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 app.use('/auth', auth_router);
 app.use('/recipe', recipe_router);
 app.use('/review', review_router);
+app.use('/user', user_router);
 
 // Fetch meals from TheMealDB API
 app.get("/meals/search/:query", async (req: Request, res: Response) => {
