@@ -12,6 +12,10 @@ recipe_router.post("/", verifyToken, uploadManager, checkValidImgMiddleware, che
     const { title, ingredients, area, instruction, category } = req.body;
     const img = req.files?.image as UploadedFile;
     const userId = (req as any).user.uid;
+    // Validate required fields
+    if (!title || !ingredients || !area || !instruction || !category || !img) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
 
     try {
         // Generate a unique ID for the image
@@ -62,13 +66,13 @@ recipe_router.put("/:id", verifyToken, uploadManager, (...params)=>checkValidImg
         if (!recipeDoc.exists) {
             return res.status(404).json({ error: "Recipe not found" });
         }
-
-        if (recipeDoc.data()?.user_id !== userId) {
+        const data = recipeDoc.data();
+        if (data?.user_id !== userId) {
             return res.status(403).json({ error: "Unauthorized" });
         }
 
-        let imgId = recipeDoc.data()?.img_id;
-        let imgUrl = recipeDoc.data()?.img_url;
+        let imgId = data?.img_id;
+        let imgUrl = data?.img_url;
 
         // If a new image is provided, upload it to Firebase Storage
         if (img) {
@@ -87,16 +91,20 @@ recipe_router.put("/:id", verifyToken, uploadManager, (...params)=>checkValidImg
             imgUrl = `https://storage.googleapis.com/${bucket.name}/images/${imgId}`;
         }
 
-        await recipeRef.update({
-            title,
-            img_id: imgId,
-            img_url: imgUrl,
-            ingredients,
-            area,
-            instruction,
-            category,
+        // Prepare the update data
+        const updateData: any = {
             updated_at: admin.firestore.FieldValue.serverTimestamp(),
-        });
+        };
+
+        if (title !== undefined) updateData.title = title;
+        if (ingredients !== undefined) updateData.ingredients = ingredients;
+        if (area !== undefined) updateData.area = area;
+        if (instruction !== undefined) updateData.instruction = instruction;
+        if (category !== undefined) updateData.category = category;
+        if (imgId !== undefined) updateData.img_id = imgId;
+        if (imgUrl !== undefined) updateData.img_url = imgUrl;
+
+        await recipeRef.update(updateData);
 
         return res.status(200).json({ message: "Recipe updated successfully" });
     } catch (error: any) {
@@ -148,7 +156,61 @@ recipe_router.get("/search", async (req: Request, res: Response) => {
         }
 
         const snapshot = await query.get();
-        const recipes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const recipes = await Promise.all(snapshot.docs.map(async doc => {
+            const recipeData = doc.data();
+            const userDoc = await db.collection("User").doc(recipeData.user_id).get();
+            const userName = userDoc.exists ? userDoc.data()?.name : "Unknown";
+
+            // Fetch reviews for the recipe
+            const reviewsSnapshot = await db.collection("Review").where("recipe_id", "==", doc.id).get();
+            const reviews = reviewsSnapshot.docs.map(reviewDoc => reviewDoc.data());
+
+            // Calculate the average rating
+            const averageRating = reviews.length > 0 
+                ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+                : 0;
+
+            return { 
+                id: doc.id, 
+                user_name: userName, 
+                title: recipeData.title, 
+                created_at: recipeData.created_at, 
+                area: recipeData.area, 
+                category: recipeData.category,
+                average_rating: averageRating
+            };
+        }));
+        res.status(200).json(recipes);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+    return;
+});
+
+// Get list of user favorite recipes
+recipe_router.get("/favorites", verifyToken, async (req: Request, res: Response) => {
+    const userId = (req as any).user.uid;
+
+    try {
+        const userDoc = await db.collection("User").doc(userId).get();
+        const recipe_ids = userDoc.data()?.saved_recipe_ids || []; 
+        const recipesSnapshot = await db.collection("Recipe").where(admin.firestore.FieldPath.documentId(), "in", recipe_ids).get();
+        const recipes = recipesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).json(recipes);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+    return;
+});
+
+// Get list of user-owned recipes
+recipe_router.get("/my_recipes", verifyToken, async (req: Request, res: Response) => {
+    const userId = (req as any).user.uid;
+
+    try {
+        const recipesSnapshot = await db.collection("Recipe").where("user_id", "==", userId).get();
+        const recipes = recipesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
         res.status(200).json(recipes);
     } catch (error: any) {
         res.status(500).json({ error: error.message });
@@ -167,7 +229,16 @@ recipe_router.get("/:id", async (req: Request, res: Response) => {
             return res.status(404).json({ error: "Recipe not found" });
         }
 
-        res.status(200).json({ id: recipeDoc.id, ...recipeDoc.data() });
+        // Fetch reviews for the recipe
+        const reviewsSnapshot = await db.collection("Review").where("recipe_id", "==", id).get();
+        const reviews = reviewsSnapshot.docs.map(doc => doc.data());
+
+        // Calculate the average rating
+        const averageRating = reviews.length > 0 
+            ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+            : 0;
+
+        res.status(200).json({ id: recipeDoc.id, ...recipeDoc.data(), average_rating:averageRating,reviews });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
