@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore"; // For Firestore
+import { auth, db } from "../../firebase"; // Adjust the path as needed
+import './login.css'; // Ensure you have this CSS file
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -25,9 +29,24 @@ const Login = () => {
       }
 
       // Firebase authentication
+      console.log("Attempting to log in with:", email); 
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("Login successful:", userCredential.user);
+
+      // Optional: Fetch user data from Firestore
+      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+      if (userDoc.exists()) {
+        console.log("User data:", userDoc.data());
+      } else {
+        console.log("User data not found in Firestore");
+      }
+
+      // Redirect to home page after successful login
       navigate('/');
+
     } catch (error) {
       // Handle different error types
+      console.error("Login error:", error);
       switch(error.code) {
         case 'auth/invalid-email':
           setError('Invalid email address');

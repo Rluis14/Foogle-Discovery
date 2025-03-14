@@ -123,6 +123,21 @@
     color: white;
   }
   
+  .spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #fff;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    animation: rotation 1s linear infinite;
+    margin: 0 auto;
+  }
+  
+  @keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
   .error-message {
     background: #fee;
     color: #e74c3c;

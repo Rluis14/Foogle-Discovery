@@ -25,7 +25,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
-          <Route path="interaction" element={<Interaction />} />
+          <Route path="/interaction" element={<Interaction />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/filter" element={<FilterSearchPage />} />
              {/* Protected Routes */}

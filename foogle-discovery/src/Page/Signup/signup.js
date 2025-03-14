@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
-import zxcvbn from 'zxcvbn'; // Missing import
+import zxcvbn from 'zxcvbn';
 import './signup.css';
 
 const Signup = () => {
@@ -15,10 +15,9 @@ const Signup = () => {
   const [passwordScore, setPasswordScore] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  // Fixed password strength check
+  
   const checkPasswordStrength = (password) => {
-    const result = zxcvbn(password); // Actual zxcvbn call
+    const result = zxcvbn(password);
     setPasswordScore(result.score);
   };
 
@@ -27,7 +26,7 @@ const Signup = () => {
     return re.test(String(email).toLowerCase());
   };
 
-    const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -43,10 +42,12 @@ const Signup = () => {
       // Firebase operations
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
+      // Update profile with username
       await updateProfile(userCredential.user, {
         displayName: username
       });
 
+      // Save user data to Firestore
       await setDoc(doc(db, "users", userCredential.user.uid), {
         username,
         email,
@@ -56,7 +57,7 @@ const Signup = () => {
       navigate('/'); // Redirect after successful signup
 
     } catch (error) {
-      // Streamlined error handling
+      // Error handling
       switch(error.code) {
         case 'auth/email-already-in-use':
           setError('Email already registered');
@@ -137,14 +138,12 @@ const Signup = () => {
               ></div>
             ))}
           </div>
+          {password && (
+            <div className="strength-text">
+              Password strength: {['Weak', 'Fair', 'Good', 'Strong'][passwordScore]}
+            </div>
+          )}
         </div>
-
-          
-        {password && (
-          <div className="strength-text">
-            Password strength: {['Weak', 'Fair', 'Good', 'Strong'][passwordScore]}
-          </div>
-        )}
 
         <div className="form-group">
           <label>Confirm Password</label>
