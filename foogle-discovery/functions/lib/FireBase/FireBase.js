@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.storage = exports.admin = exports.app = void 0;
+exports.auth = exports.storage = exports.admin = exports.app = void 0;
 const admin = __importStar(require("firebase-admin"));
 exports.admin = admin;
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -36,5 +36,7 @@ exports.app = app;
 const db = admin.firestore();
 const storage = admin.storage();
 exports.storage = storage;
+const auth = admin.auth();
+exports.auth = auth;
 exports.default = db;
 //# sourceMappingURL=FireBase.js.map

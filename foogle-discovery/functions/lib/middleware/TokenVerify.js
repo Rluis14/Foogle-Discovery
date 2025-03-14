@@ -7,7 +7,6 @@ async function verifyToken(req, res, next) {
     const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split("Bearer ")[1];
     if (!token) {
         return res.status(401).json({ error: "Unauthorized" });
-        ;
     }
     try {
         const decodedToken = await FireBase_1.admin.auth().verifyIdToken(token);
@@ -16,13 +15,13 @@ async function verifyToken(req, res, next) {
     }
     catch (error) {
         return res.status(401).json({ error: "Invalid token" });
-        ;
     }
 }
 exports.verifyToken = verifyToken;
 async function generateToken(id) {
     try {
-        const token = await FireBase_1.admin.auth().createCustomToken(id);
+        const user = await FireBase_1.admin.auth().getUser(id);
+        const token = await FireBase_1.admin.auth().createCustomToken(id, { displayName: user.displayName });
         return token;
     }
     catch (error) {

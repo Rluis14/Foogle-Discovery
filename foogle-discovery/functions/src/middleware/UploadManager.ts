@@ -73,7 +73,7 @@ async function checkValidJsonMiddleware(req:Request, res:Response, next:NextFunc
   next();
 }
 
-module.exports = {
+export  {
   uploadManager,
   checkValidImgMiddleware,
   checkValidJsonMiddleware,
