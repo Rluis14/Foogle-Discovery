@@ -138,7 +138,7 @@ recipe_router.get("/search", async (req: Request, res: Response) => {
         let query = db.collection("Recipe") as FirebaseFirestore.Query<FirebaseFirestore.DocumentData>;
 
         if (name) {
-            query = query.where("title", "==", name);
+            query = query.where('title', '>=', name).where('title', '<=', name + '~');
         }
         if (category) {
             query = query.where("category", "==", category);
