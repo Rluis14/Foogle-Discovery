@@ -12,6 +12,7 @@ review_router.post("/", verifyToken, uploadManager, checkValidImgMiddleware, che
     const { title, description, rating, recipe_id } = req.body;
     const img = req.files?.image as UploadedFile;
     const userId = (req as any).user.uid;
+    const userName = (req as any).user.user_name;
     // Validate required fields
     if (!title || !description || !rating || !recipe_id || !img) {
         return res.status(400).json({ error: "All fields are required" });
@@ -40,6 +41,7 @@ review_router.post("/", verifyToken, uploadManager, checkValidImgMiddleware, che
             img_url: imgUrl,
             recipe_id,
             user_id: userId,
+            user_name: userName,
             created_at: admin.firestore.FieldValue.serverTimestamp(),
         };
 
@@ -81,11 +83,11 @@ review_router.put("/:id", verifyToken, uploadManager, (...params)=>checkValidImg
             // Upload the new image to Firebase Storage
             const bucket = storage.bucket();
             const file = bucket.file(`images/${imgId}`);
-            await file.save(img.data, {
+            const fileDelete = bucket.file(`images/${data?.img_id}`);
+            await Promise.all([fileDelete.delete(),file.save(img.data, {
                 metadata: { contentType: img.mimetype },
                 public: true,
-            });
-
+            })])
             // Get the public URL of the uploaded image
             imgUrl = `https://storage.googleapis.com/${bucket.name}/images/${imgId}`;
         }
@@ -117,7 +119,9 @@ review_router.delete("/:id", verifyToken, async (req: Request, res: Response) =>
     try {
         const reviewRef = db.collection("Review").doc(id);
         const reviewDoc = await reviewRef.get();
-
+        const data = reviewDoc.data();
+        const bucket = storage.bucket();
+        const fileDelete = bucket.file(`images/${data?.img_id}`);
         if (!reviewDoc.exists) {
             return res.status(404).json({ error: "Review not found" });
         }
@@ -126,7 +130,7 @@ review_router.delete("/:id", verifyToken, async (req: Request, res: Response) =>
             return res.status(403).json({ error: "Unauthorized" });
         }
 
-        await reviewRef.delete();
+        await Promise.all([reviewRef.delete(),fileDelete.delete()]);
         res.status(200).json({ message: "Review deleted successfully" });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
