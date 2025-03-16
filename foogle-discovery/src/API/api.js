@@ -35,13 +35,43 @@ export const signUp = async (email, password, user_name) => {
 export const createRecipe = async (recipe) => {
     let result = null;
     let error = null;
+    const token = localStorage.getItem('token');
     try{
         const form = new FormData();
-        form.append('json', JSON.stringify(recipe));
+        const recipeBody = recipe;
+        //remove image out of recipe to avoid stringify
+        recipeBody.image = undefined;
+        form.append('json', JSON.stringify(recipeBody));
         form.append('image', recipe.image);
         const response = await api.post('/recipe', form, {
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
+                'Authorization':'Bearer ' + token,
+            }
+        });
+        result = response.data;
+    }catch(err){
+        console.error(err);
+        error = err;
+    }
+    return [result,error];
+}
+
+export const createReview = async (user_id,review) => {
+    let result = null;
+    let error = null;
+    const token = localStorage.getItem('token');
+    const form = new FormData();
+    const reviewBody = review;
+    //remove image out of review to avoid stringify
+    reviewBody.image = undefined;
+    form.append('json', JSON.stringify(reviewBody));
+    form.append('image', review.image);
+    try{
+        const response = await api.post(`/review/${user_id}`, form,{
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization':'Bearer ' + token,
             }
         });
         result = response.data;
