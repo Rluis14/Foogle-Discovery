@@ -1,9 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { admin } from "../FireBase/FireBase";
 
-async function verifyToken(req: Request, res: Response, next: NextFunction) {
+async function verifyToken(req: Request, res: Response, next: NextFunction,required=true) {
     const token = req.headers.authorization?.split("Bearer ")[1];
-    if (!token) {
+    if(!token && !required){
+        return next();
+    }
+    else if (!token) {
         return res.status(401).json({ error: "Unauthorized" });
     }
     try {
