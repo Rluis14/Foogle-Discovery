@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import AreaFood from "../../static/AreaFood";
 import "./RecipeEditor.css";
-
+import categoryfood from "../../static/CategoryFood";
 const RecipeEditor = ({
   onExit = () => {},
   showed = false,
@@ -14,6 +14,7 @@ const RecipeEditor = ({
   const [imgSrc, setImgSrc] = useState(recipe?.img||"");
   const [ingredients, setIngredients] = useState(recipe?.ingredients||[""]);
   const [selectionArea, setSectionArea] = useState(recipe?.area||"");
+  const [category, setCategory] = useState(recipe?.category || "");
   const imgUploadRef = useRef(null);
   const imgUploadContainerRef = useRef(null);
   const handleAddIngredient = () => {
@@ -76,11 +77,12 @@ const RecipeEditor = ({
       instruction,
       imgSrc,
       ingredients,
+      category,
+      selectionArea,
+      id:recipe?.id,
     };
-    console.log(newRecipe);
     onAddRecipe(newRecipe);
     onExit();
-    // Add your logic here
   };
 
   const onCancel = () => {
@@ -109,7 +111,7 @@ const RecipeEditor = ({
             />
           </div>
           <div className="form_group">
-            <label>Instruction</label>
+            <label>Select Area</label>
             <select
               value={selectionArea}
               onChange={(e) => setSectionArea(e.target.value)}
@@ -118,6 +120,20 @@ const RecipeEditor = ({
               {AreaFood.map((area, index) => (
                 <option key={index} value={area}>
                   {area}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form_group">
+            <label>Select Category</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="">Select Category</option>
+              {categoryfood.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
                 </option>
               ))}
             </select>

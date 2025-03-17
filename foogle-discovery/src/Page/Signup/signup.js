@@ -15,16 +15,17 @@ const Signup = () => {
   const [passwordScore, setPasswordScore] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
-  const checkPasswordStrength = (password) => {
-    const result = zxcvbn(password);
-    setPasswordScore(result.score);
-  };
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(String(email).toLowerCase());
   };
+
+  // Added missing password strength check function
+  const checkPasswordStrength = (password) => {
+    const result = password;
+    setPasswordScore(result.score);
+  };  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,6 +56,13 @@ const Signup = () => {
       });
 
       navigate('/'); // Redirect after successful signup
+      if (!validateEmail(email)) {
+        throw new Error('Please enter a valid email address');
+      }
+
+      if (password !== confirmPassword) {
+        throw new Error('Passwords do not match');
+      }     
 
     } catch (error) {
       // Error handling

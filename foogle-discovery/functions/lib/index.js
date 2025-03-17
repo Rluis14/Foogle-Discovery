@@ -27,33 +27,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const https_1 = require("firebase-functions/v2/https");
-const admin = __importStar(require("firebase-admin"));
+const FireBase_1 = __importStar(require("./FireBase/FireBase"));
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const axios_1 = __importDefault(require("axios"));
-admin.initializeApp();
-const db = admin.firestore();
+const TokenVerify_1 = require("./middleware/TokenVerify");
+const Auth_1 = __importDefault(require("./routers/Auth"));
 const app = (0, express_1.default)();
+app.use(express_1.default.json());
 app.use((0, cors_1.default)({ origin: true }));
 const MEALDB_API = "https://www.themealdb.com/api/json/v1/1";
-// Middleware to verify Firebase Authentication token
-const verifyAuth = async (req, res, next) => {
-    var _a;
-    const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split("Bearer ")[1];
-    if (!token) {
-        res.status(401).json({ error: "Unauthorized" });
-        return;
-    }
-    try {
-        const decodedToken = await admin.auth().verifyIdToken(token);
-        req.user = decodedToken;
-        return next();
-    }
-    catch (error) {
-        res.status(401).json({ error: "Invalid token" });
-        return;
-    }
-};
+app.get("/", (req, res) => {
+    return res.send("Welcome to server");
+});
+app.use('/auth', Auth_1.default);
 // Fetch meals from TheMealDB API
 app.get("/meals/search/:query", async (req, res) => {
     try {
@@ -66,12 +53,12 @@ app.get("/meals/search/:query", async (req, res) => {
     }
 });
 // Save a favorite meal (Authenticated)
-app.post("/favorites", verifyAuth, async (req, res) => {
+app.post("/favorites", TokenVerify_1.verifyToken, async (req, res) => {
     try {
         const { mealId, mealName, mealThumb } = req.body;
         const userId = req.user.uid;
-        await db.collection("users").doc(userId).collection("favorites").doc(mealId).set({
-            mealId, mealName, mealThumb, savedAt: admin.firestore.FieldValue.serverTimestamp()
+        await FireBase_1.default.collection("users").doc(userId).collection("favorites").doc(mealId).set({
+            mealId, mealName, mealThumb, savedAt: FireBase_1.admin.firestore.FieldValue.serverTimestamp()
         });
         res.json({ message: "Meal saved successfully!" });
     }
@@ -80,10 +67,10 @@ app.post("/favorites", verifyAuth, async (req, res) => {
     }
 });
 // Get user’s saved meals (Authenticated)
-app.get("/favorites", verifyAuth, async (req, res) => {
+app.get("/favorites", TokenVerify_1.verifyToken, async (req, res) => {
     try {
         const userId = req.user.uid;
-        const snapshot = await db.collection("users").doc(userId).collection("favorites").get();
+        const snapshot = await FireBase_1.default.collection("users").doc(userId).collection("favorites").get();
         const favorites = snapshot.docs.map(doc => doc.data());
         res.json(favorites);
     }
@@ -92,11 +79,11 @@ app.get("/favorites", verifyAuth, async (req, res) => {
     }
 });
 // Remove meal from favorites (Authenticated)
-app.delete("/favorites/:mealId", verifyAuth, async (req, res) => {
+app.delete("/favorites/:mealId", TokenVerify_1.verifyToken, async (req, res) => {
     try {
         const userId = req.user.uid;
         const mealId = req.params.mealId;
-        await db.collection("users").doc(userId).collection("favorites").doc(mealId).delete();
+        await FireBase_1.default.collection("users").doc(userId).collection("favorites").doc(mealId).delete();
         res.json({ message: "Meal removed successfully!" });
     }
     catch (error) {

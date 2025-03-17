@@ -1,6 +1,4 @@
 import React, { useContext, useState } from 'react';
-import ReviewCard from '../../components/ReviewCard/ReviewCard';
-import RecipeCard from '../../components/RecipeCard/RecipeCard';
 import './Profile.css';
 import { AuthContext } from '../../context/AuthContext';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
