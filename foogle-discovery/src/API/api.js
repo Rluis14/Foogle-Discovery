@@ -42,7 +42,7 @@ export const createRecipe = async (recipe) => {
         //remove image out of recipe to avoid stringify
         recipeBody.image = undefined;
         form.append('json', JSON.stringify(recipeBody));
-        form.append('image', recipe.image);
+        form.append('image', recipe.imgSrc);
         const response = await api.post('/recipe', form, {
             headers: {
                 'Content-Type': 'multipart/form-data',
