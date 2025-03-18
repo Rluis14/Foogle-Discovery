@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./SearchPage.css";
+import axios from "axios";
 
 const API_BASE_URL = "https://us-central1-your-project-id.cloudfunctions.net/api"; // Replace with your Firebase API URL
 

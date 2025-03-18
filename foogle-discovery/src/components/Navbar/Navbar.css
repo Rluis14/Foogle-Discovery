@@ -1,20 +1,30 @@
-/* Navbar.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #fff5e6;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 1.5rem 5%;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
 .logo {
-    font-size: 1.8rem;
+    flex:1;
+    font-size: 1.6rem;
     font-weight: bold;
     color: #ff6b6b;
+    text-align: left;
+    position: relative; 
     cursor: pointer;
-}
-
-h1 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 2rem;
-}
-
-.auth-buttons {
-    display: flex;
-    align-items: center;
 }
 
 .auth-buttons button {
@@ -30,7 +40,6 @@ h1 {
 .login {
     background-color: transparent;
     color: #ff6b6b;
-    border: 2px solid #ff6b6b; /* Added border to match previous style */
 }
 
 .signup {
@@ -38,56 +47,24 @@ h1 {
     color: white;
 }
 
-.logout {
-    background-color: #ff6b6b;
-    color: white;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
+.main-content {
+    text-align: center;
+    padding: 4rem 5%;
 }
 
-.auth-forms {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+.get-started {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin: 2rem auto;
 }
 
-.auth-input {
-    padding: 0.8rem;
-    border: 1px solid #ccc;
-    border-radius: 25px;
-    outline: none;
-    font-size: 1rem;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.user-info span {
-    font-size: 1.2rem;
+h1 {
+    font-size: 2.5rem;
     color: #333;
-}
-
-.username {
-    font-weight: 600;
-}
-
-button:hover {
-    transform: translateY(-2px);
-}
-
-nav {
-    display: flex;
-    justify-content: space-between;
-    padding: 1.5rem 5%;
-    background-color: #ffffff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
 }
 
 .action-buttons button {
@@ -97,6 +74,32 @@ nav {
     border-radius: 30px;
     font-size: 1.1rem;
     cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.search-btn {
+    background-color: #ff9f43;
+    color: white;
+}
+
+.filter-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem 5%;
+}
+
+.food-image {
+    width: 100%;
+    height: 200px;
+    border-radius: 15px;
+    object-fit: cover;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
 }
 
@@ -116,25 +119,12 @@ nav {
     .action-buttons button {
         margin: 0.5rem;
     }
-
-    .auth-forms {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
 }
+
 
 @media (max-width: 480px) {
     .auth-buttons {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .auth-forms {
-        width: 100%;
-    }
-
-    .auth-input {
-        width: 100%;
+        display: none;
     }
 
     .get-started {
@@ -145,4 +135,12 @@ nav {
         width: 100%;
         margin: 0.5rem 0;
     }
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+.food-image:hover {
+    transform: scale(1.03);
 }

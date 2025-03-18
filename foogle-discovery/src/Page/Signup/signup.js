@@ -23,7 +23,7 @@ const Signup = () => {
 
   // Added missing password strength check function
   const checkPasswordStrength = (password) => {
-    const result = password;
+    const result = zxcvbn (password);
     setPasswordScore(result.score);
   };  
 
@@ -138,7 +138,7 @@ const Signup = () => {
             {[...Array(4)].map((_, i) => (
               <div 
                 key={i}
-                className="strength-bar"
+                className={`strength-bar strength-${passwordScore}`}
                 style={{ 
                   backgroundColor: getBarColor(passwordScore),
                   opacity: password ? 1 : 0.3

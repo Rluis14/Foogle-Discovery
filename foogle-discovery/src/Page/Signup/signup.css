@@ -86,6 +86,12 @@
     box-shadow: 0 0 0 4px rgba(255, 159, 67, 0.15);
   }
   
+  .password-meter {
+    display: flex;
+    gap: 4px;
+    margin-top: 0.5rem;
+  }
+  
   .password-strength {
     margin-top: 0.8rem;
   }
