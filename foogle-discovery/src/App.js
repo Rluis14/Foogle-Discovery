@@ -11,7 +11,6 @@ import { useContext } from "react";
 import RecipeEditor from "./components/RecipeEditor/RecipeEditor";
 import { AuthProvider } from "./context/AuthContext";
 import SearchPage from './Page/Searchpage/SearchPage';
-import FilterSearchPage from './Page/Filterpage/FilterSearchPage';
 import Login from "./Page/Login/login";
 import Signup from "./Page/Signup/signup";
 import Interaction from "./Page/Interaction/Interaction";
@@ -27,7 +26,6 @@ function App() {
           <Route path="signup" element={<Signup />} />
           <Route path="interaction" element={<Interaction />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/filter" element={<FilterSearchPage />} />
              {/* Protected Routes */}
             <Route path="profile" element={<Profile />}>
               <Route path="saved_recipes" element={<SavedRecipeCardCardList/>}/>
