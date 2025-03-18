@@ -5,6 +5,7 @@ import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyAtW7fszphx2QunGFf6hqdYs1V8P_j5cK8",
   authDomain: "foogle-612c9.firebaseapp.com",
+  databaseURL: "https://foogle-612c9-default-rtdb.firebaseio.com",
   projectId: "foogle-612c9",
   storageBucket: "foogle-612c9.firebasestorage.app",
   messagingSenderId: "988667291686",
