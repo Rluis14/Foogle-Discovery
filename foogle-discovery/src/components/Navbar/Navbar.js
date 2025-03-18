@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { signIn } from '../../API/api';
 import { signUp } from '../../API/api';
@@ -8,6 +8,7 @@ import './Navbar.css';
 import MainContent from '../MainContent/MainContent';
 import Login from '../../Page/Login/login';
 import Signup from '../../Page/Signup/signup';
+import { AuthContext } from '../../context/AuthContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -15,22 +16,26 @@ const Navbar = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const {setUser} = useContext(AuthContext)
   // check is user is already logged in 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      let name = null;
       if (user) {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if(userDoc.exists()) {
-          setUsername(userDoc.data().username);
+          name = userDoc.data().username;
         } else {
-          setUsername(user.email);
+          name = user.email;
         }
         setIsLoggedIn(true);
+        setUser(name);
       } else {
         setIsLoggedIn(false);
-        setUsername('');
+        setUsername(null);
+        name = '';
       }
+      setUsername(name);
     });
 
     return unsubscribe;

@@ -1,62 +1,88 @@
 import { useNavigate } from "react-router-dom";
 import "./SavedRecipeCardCardList.css";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import RecipeCard from "../RecipeCard/RecipeCard";
-const dummyRecipes = [
-    {
-      id: 5,
-      title: 'Spaghetti Carbonara',
-      rating: 5,
-      imgSrc: 'https://www.simplyrecipes.com/thmb/Boo37yZBqeSpmELBIP_BBX_yVlU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Simply-Recipes-Spaghetti-And-Meatballs-LEAD-3-40bdae68ea144751a8e0a4b0f972af2d.jpg',
-      username: 'User test',
-      saved:true,
-    },
-    {
-      id: 6,
-      title: 'Chicken Alfredo',
-      rating: 4,
-      imgSrc: 'https://www.simplyrecipes.com/thmb/Boo37yZBqeSpmELBIP_BBX_yVlU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Simply-Recipes-Spaghetti-And-Meatballs-LEAD-3-40bdae68ea144751a8e0a4b0f972af2d.jpg',
-      username: 'User test',
-      saved:true,
-    }
-  ];
+import axios from "axios";
+const baseURL = "https://us-central1-foogle-6b1d1.cloudfunctions.net/api";
+const dummyData = [
+  {
+    id: 7,
+    title: "Spaghetti Carbonara",
+    average_rating: 5,
+    img_url:
+      "https://www.simplyrecipes.com/thmb/Boo37yZBqeSpmELBIP_BBX_yVlU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Simply-Recipes-Spaghetti-And-Meatballs-LEAD-3-40bdae68ea144751a8e0a4b0f972af2d.jpg",
+    saved: true,
+    user_name: "User test",
+  },
+  {
+    id: 8,
+    title: "Chicken Alfredo",
+    average_rating: 4,
+    img_url:
+      "https://www.simplyrecipes.com/thmb/Boo37yZBqeSpmELBIP_BBX_yVlU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Simply-Recipes-Spaghetti-And-Meatballs-LEAD-3-40bdae68ea144751a8e0a4b0f972af2d.jpg",
+    saved: true,
+    user_name: "User test",
+  },
+];
 function SavedRecipeCardCardList() {
-  const navigate = useNavigate();
-  const [data,setData] = useState([]); 
-  useEffect(()=>{
+  // const navigate = useNavigate();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(async () => {
     //fetch here
-    setData(dummyRecipes);
-  },[])
+    // const res = await axios.get(`${baseURL}/favorites`);
+    // const recipes = res.data.map((recipe) => ({
+    //   id: recipe.mealId,
+    //   title: recipe.mealName,
+    //   rating: 5,
+    //   imgSrc: recipe.mealThumb,
+    //   username: "User " + Math.floor(Math.random() * 100),
+    //   saved: true,
+    // }));
+    // setData(recipes);
+    setData(dummyData);
+    setLoading(false);
+  }, []);
+
   //navigate to recipe page
-  const onClick = (index) => {};
+  const onClick = (index) => {
+    console.log("clicked", index);
+  };
 
   const onClickSave = (index, saved) => {
-    setData(prev=>{
+    setData((prev) => {
       const newData = [...prev];
       newData[index].saved = !saved;
       console.log(newData);
       return newData;
-    })
+    });
   };
 
   return (
     <React.Fragment>
       <h2 className="title">User's Saved Recipes</h2>
       <div className="recipe_container">
-      {data.map((recipe,index) => (
-        <RecipeCard
-          key={`${recipe.id} ${recipe.saved}`}
-          title={recipe.title}
-          rating={recipe.rating}
-          imgSrc={recipe.imgSrc}
-          username={recipe.username}
-          onClickSave={()=>onClickSave(index,recipe.saved)}
-          onClick={()=>onClick(index)}
-          saved={recipe.saved}
-        />
-      ))}
+        {loading ? ( 
+          <p className="loading-message">Loading...</p>
+        ) : data.length === 0 ? ( 
+          <p className="no-recipes-message">No recipes saved.</p>
+        ) : (
+          data.map((recipe, index) => (
+            <RecipeCard
+              key={`${recipe.id} ${recipe.saved}`}
+              title={recipe.title}
+              rating={recipe.rating}
+              imgSrc={recipe.imgSrc}
+              username={recipe.username}
+              onClickSave={() => onClickSave(index, !recipe.saved)}
+              onClick={() => onClick(index)}
+              saved={recipe.saved}
+            />
+          ))
+        )}
       </div>
-      </React.Fragment>
+    </React.Fragment>
   );
 }
 export default SavedRecipeCardCardList;

@@ -10,33 +10,38 @@ import CreatedRecipesList from "./components/CreatedRecipesList/CreatedRecipesLi
 import { useContext } from "react";
 import RecipeEditor from "./components/RecipeEditor/RecipeEditor";
 import { AuthProvider } from "./context/AuthContext";
-import SearchPage from './Page/Searchpage/SearchPage';
+import SearchPage from "./Page/Searchpage/SearchPage";
 import Login from "./Page/Login/login";
 import Signup from "./Page/Signup/signup";
 import Interaction from "./Page/Interaction/Interaction";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   return (
-      <Router>
-        <Routes>
-          <Route path="/" element={<Navbar />}>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navbar />}>
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
           <Route path="/interaction" element={<Interaction />} />
           <Route path="/search" element={<SearchPage />} />
-             {/* Protected Routes */}
-            <Route path="profile" element={<Profile />}>
-              <Route path="saved_recipes" element={<SavedRecipeCardCardList/>}/>
-              {/* <Route path="" element={<h2>Hello {user}</h2>}/> */}
-              <Route path="review" element={<UserReviewList/>}/>
-              <Route path="created_recipes" element={<CreatedRecipesList/>}/>
-            </Route>
-            {/* <Route path='recipe_edit' element={<RecipeEditor/>}/> */}
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="saved_recipes" element={<SavedRecipeCardCardList />} />
+            <Route path="review" element={<UserReviewList />} />
+            <Route path="created_recipes" element={<CreatedRecipesList />} />
           </Route>
-        </Routes>
-      </Router>
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
