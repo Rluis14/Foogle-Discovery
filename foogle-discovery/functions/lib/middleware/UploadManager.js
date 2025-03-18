@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkValidJsonMiddleware = exports.checkValidImgMiddleware = exports.uploadManager = void 0;
 const fileUpload = require('express-fileupload');
-const { createErrRes } = require("../tools/ResTool");
 const MB_TO_BYTE = 1024 * 1024;
 const MAX_IMAGE_SIZE = 3 * MB_TO_BYTE; // 3mb
 const MAX_IMAGE_COUNT = 9;
@@ -18,7 +17,7 @@ const uploadManager = fileUpload({
     abortOnLimit: true,
     // safeFileNames: true,
     limitHandler: (req, res, next) => {
-        return createErrRes({ res, status_code: 413, error: 'Uploaded image should be less than ' + Math.trunc(MAX_IMAGE_SIZE / MB_TO_BYTE) + 'mb and upload ' + MAX_IMAGE_COUNT + ' images each time' });
+        return res.status(400).json({ error: 'Uploaded image should be less than ' + Math.trunc(MAX_IMAGE_SIZE / MB_TO_BYTE) + 'mb and upload ' + MAX_IMAGE_COUNT + ' images each time' });
     }
 });
 exports.uploadManager = uploadManager;
@@ -52,24 +51,24 @@ async function checkValidJsonMiddleware(req, res, next) {
     // check if files exist or file is in the correct field
     if (!req.files || !req.files.json) {
         const err = 'Json not found or not set in the right fields form. Only accept fields "json"';
-        return createErrRes({ res, error: err, status_code: 400 });
+        return res.status(400).json({ error: err });
     }
     // auto convert to array if there is multiple json
     const is_arr = Array.isArray(req.files.json);
     // check if only 1 json
     if (is_arr) {
         const err = 'Only upload 1 json at a time. Found ' + req.files.json.length;
-        return createErrRes({ res, error: err, status_code: 413 });
+        return res.status(400).json({ error: err });
     }
     // check if files is json type
     let json = req.files.json;
     if (json.mimetype !== 'application/json') {
         const err = '"json" field only accept json file';
-        return createErrRes({ res, error: err, status_code: 400 });
+        return res.status(400).json({ error: err });
     }
     // application/json will make json.data a string
     req.body = JSON.parse(json.data.toString());
-    next();
+    return next();
 }
 exports.checkValidJsonMiddleware = checkValidJsonMiddleware;
 //# sourceMappingURL=UploadManager.js.map

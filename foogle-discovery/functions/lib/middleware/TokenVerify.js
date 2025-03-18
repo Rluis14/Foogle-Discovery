@@ -2,10 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyToken = exports.generateToken = void 0;
 const FireBase_1 = require("../FireBase/FireBase");
-async function verifyToken(req, res, next) {
+async function verifyToken(req, res, next, required = true) {
     var _a;
     const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split("Bearer ")[1];
-    if (!token) {
+    if (!token && !required) {
+        return next();
+    }
+    else if (!token) {
         return res.status(401).json({ error: "Unauthorized" });
     }
     try {
