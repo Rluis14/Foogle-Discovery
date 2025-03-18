@@ -166,10 +166,12 @@ recipe_router.get("/search", async (req: Request, res: Response) => {
             query = query.where('title', '>=', title).where('title', '<=', title + '~');
         }
         if (category) {
-            query = query.where("category", "==", category);
+            const categories = typeof category === 'string' ? category.split(',') : [];
+            query = query.where("category", "in", categories);
         }
         if (area) {
-            query = query.where("area", "==", area);
+            const areas = typeof area === 'string' ? area.split(',') : [];
+            query = query.where("area", "in", areas);
         }
 
         const snapshot = await query.get();

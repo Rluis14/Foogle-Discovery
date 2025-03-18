@@ -42,13 +42,21 @@ function CreatedRecipesList() {
   const onAdd = () => {
     setShowEditor(true);
   };
-  const addRecipe = async (recipe) => {
-    const [result,error] = await createRecipe(recipe);
+  const addRecipe = async (newRecipe) => {
+    const [result,error] = await createRecipe({
+      title: newRecipe.title,
+      instruction: newRecipe.instruction,
+      image: newRecipe.imgSrc,
+      ingredients: newRecipe.ingredients,
+      area: newRecipe.selectionArea,
+      category: newRecipe.category
+    });
     if(error){
       console.error(error);
       return;
     }
-    setData([...data,result.recipe]);
+    const {recipe} = result;
+    setData([...data,recipe]);
     setShowEditor(false);
   };
   return (
