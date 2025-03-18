@@ -81,3 +81,37 @@ export const createReview = async (user_id,review) => {
     }
     return [result,error];
 }
+
+export const getRecipes = async ({title,category,area}) => {
+    let result = null;
+    let error = null;
+    try{
+        let params = {};
+        if(title) params.title = title;
+        if(category) params.category = category;
+        if(area) params.area = area;
+        const response = await api.get('/recipe/search', {
+            params: params,
+        });
+        result = response.data;
+    }catch(err){
+        console.error(err);
+        error = err;
+    }
+    return [result,error];
+}
+
+export const getRecipeById = async (id) => {
+    let result = null;
+    let error = null;
+    try{
+        const response = await api.get(`/recipe/${id}`);
+        result = response.data;
+    }catch(err){
+        console.error(err);
+        error = err;
+    }
+    return [result,error];
+}
+
+export const getReviews = async (recipe_id) => {};

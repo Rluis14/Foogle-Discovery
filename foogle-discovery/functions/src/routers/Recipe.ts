@@ -48,7 +48,7 @@ recipe_router.post("/", verifyToken, uploadManager, checkValidImgMiddleware, che
         };
 
         const docRef = await db.collection("Recipe").add(newRecipe);
-        res.status(201).json({ message: "Recipe created successfully", id: docRef.id });
+        res.status(201).json({ message: "Recipe created successfully", id: docRef.id,recipe:{...newRecipe,average_rating: 0} });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
@@ -157,13 +157,13 @@ async function calculateAverageRating(recipeId: string): Promise<number> {
 
 // Get recipes by combined criteria
 recipe_router.get("/search", async (req: Request, res: Response) => {
-    const { name, category, area } = req.query;
+    const { title, category, area } = req.query;
 
     try {
         let query = db.collection("Recipe") as FirebaseFirestore.Query<FirebaseFirestore.DocumentData>;
 
-        if (name) {
-            query = query.where('title', '>=', name).where('title', '<=', name + '~');
+        if (title) {
+            query = query.where('title', '>=', title).where('title', '<=', title + '~');
         }
         if (category) {
             query = query.where("category", "==", category);

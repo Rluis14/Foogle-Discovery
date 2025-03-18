@@ -7,6 +7,7 @@ const RecipeEditor = ({
   showed = false,
   onDelete = () => {},
   onAddRecipe = (recipe) => {},
+  loading = false,
   recipe,
 }) => {
   const [title, setTitle] = useState(recipe?.title||"");
@@ -82,7 +83,6 @@ const RecipeEditor = ({
       id:recipe?.id,
     };
     onAddRecipe(newRecipe);
-    onExit();
   };
 
   const onCancel = () => {
@@ -198,13 +198,17 @@ const RecipeEditor = ({
             </button>
           </div>
           <div className="form_actions">
-            {recipe&&<button className="delete_button" onClick={onCancel}>
-              Delete
-            </button>}
-            <button className="cancel_button" onClick={onCancel}>
-              Cancel
+            {recipe && (
+              <button className="delete_button" onClick={onDelete} disabled={loading}>
+                {loading ? "Deleting..." : "Delete"}
+              </button>
+            )}
+            <button className="cancel_button" onClick={onCancel} disabled={loading}>
+              {loading ? "Cancelling..." : "Cancel"}
             </button>
-            <button type="submit">Add</button>
+            <button type="submit" disabled={loading}>
+              {loading ? "Adding..." : "Add"}
+            </button>
           </div>
         </form>
       </div>

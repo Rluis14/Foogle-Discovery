@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
 const fileUpload = require('express-fileupload');
-const { createErrRes } = require("../tools/ResTool");
 
 const MB_TO_BYTE = 1024 * 1024;
 const MAX_IMAGE_SIZE = 3 * MB_TO_BYTE; // 3mb
@@ -19,7 +18,7 @@ const uploadManager = fileUpload({
   abortOnLimit: true,
   // safeFileNames: true,
   limitHandler: (req:Request, res:Response, next:NextFunction) => {
-    return createErrRes({ res, status_code: 413, error: 'Uploaded image should be less than ' + Math.trunc(MAX_IMAGE_SIZE / MB_TO_BYTE) + 'mb and upload ' + MAX_IMAGE_COUNT + ' images each time' });
+    return res.status(400).json({ error: 'Uploaded image should be less than ' + Math.trunc(MAX_IMAGE_SIZE / MB_TO_BYTE) + 'mb and upload ' + MAX_IMAGE_COUNT + ' images each time' }); 
   }
 });
 
@@ -53,24 +52,24 @@ async function checkValidJsonMiddleware(req:Request, res:Response, next:NextFunc
   // check if files exist or file is in the correct field
   if (!req.files || !req.files.json) {
     const err = 'Json not found or not set in the right fields form. Only accept fields "json"';
-    return createErrRes({ res, error: err, status_code: 400 });
+    return res.status(400).json({ error: err });
   }
   // auto convert to array if there is multiple json
   const is_arr = Array.isArray(req.files.json);
   // check if only 1 json
   if (is_arr) {
     const err = 'Only upload 1 json at a time. Found ' + (req.files.json as UploadedFile[]).length;
-    return createErrRes({ res, error: err, status_code: 413 });
+    return res.status(400).json({ error: err });
   }
   // check if files is json type
   let json = (req.files.json as UploadedFile);
   if (json.mimetype !== 'application/json') {
     const err = '"json" field only accept json file';
-    return createErrRes({ res, error: err, status_code: 400 });
+    return res.status(400).json({ error: err });
   }
   // application/json will make json.data a string
   req.body = JSON.parse(json.data.toString());
-  next();
+  return next();
 }
 
 export  {
