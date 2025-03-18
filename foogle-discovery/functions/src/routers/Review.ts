@@ -50,6 +50,7 @@ review_router.post("/", verifyToken, uploadManager, checkValidImgMiddleware, che
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
+    return;
 });
 
 // Update a review

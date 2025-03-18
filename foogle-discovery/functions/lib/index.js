@@ -33,6 +33,9 @@ const cors_1 = __importDefault(require("cors"));
 const axios_1 = __importDefault(require("axios"));
 const TokenVerify_1 = require("./middleware/TokenVerify");
 const Auth_1 = __importDefault(require("./routers/Auth"));
+const Recipe_1 = __importDefault(require("./routers/Recipe"));
+const Review_1 = __importDefault(require("./routers/Review"));
+const User_1 = __importDefault(require("./routers/User"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({ origin: true }));
@@ -41,6 +44,9 @@ app.get("/", (req, res) => {
     return res.send("Welcome to server");
 });
 app.use('/auth', Auth_1.default);
+app.use('/recipe', Recipe_1.default);
+app.use('/review', Review_1.default);
+app.use('/user', User_1.default);
 // Fetch meals from TheMealDB API
 app.get("/meals/search/:query", async (req, res) => {
     try {
