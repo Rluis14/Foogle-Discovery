@@ -1,106 +1,66 @@
 import React, { useState } from "react";
-import "./SearchPage.css";
+import { fetchAndStoreMeal } from "../../API/api";
+import { getAuth } from "firebase/auth";
 import axios from "axios";
+import "./SearchPage.css";
 
-const API_BASE_URL = "https://us-central1-your-project-id.cloudfunctions.net/api"; // Replace with your Firebase API URL
-
-const CombinedSearchPage = () => {
+const SearchPage = () => {
   const [query, setQuery] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState([]);
   const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const auth = getAuth();
+  const userId = auth.currentUser ? auth.currentUser.uid : null;
 
-  const foodCategories = ["Barbeque", "Breakfast", "Dessert", "Pasta", "Salad", "Soup"];
-
-  // Handle search function
+  // Fetch meals from TheMealDB (Public)
   const handleSearch = async () => {
-    setLoading(true);
-    setError("");
-    setResults([]);
+    if (!query.trim()) return;
 
     try {
-      const response = await axios.get(`${API_BASE_URL}/meals/search/${query}`);
-      let meals = response.data.meals || [];
-
-      // Apply category filters
-      if (selectedFilters.length > 0) {
-        meals = meals.filter(meal => selectedFilters.some(filter => meal.strCategory.includes(filter)));
+      const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`);
+      if (response.data.meals) {
+        setResults(response.data.meals);
+      } else {
+        setResults([]);
       }
-
-      setResults(meals);
-    } catch (err) {
-      setError("Error fetching meals. Please try again.");
-      console.error(err);
+    } catch (error) {
+      console.error("Error fetching meals:", error);
     }
-
-    setLoading(false);
   };
 
-  // Handle category selection
-  const handleFilterChange = (category) => {
-    setSelectedFilters((prev) =>
-      prev.includes(category)
-        ? prev.filter((item) => item !== category)
-        : [...prev, category]
-    );
+  // Save a meal to Firestore for the logged-in user
+  const handleSaveMeal = async (meal) => {
+    if (!userId) {
+      alert("Please sign in to save meals.");
+      return;
+    }
+    await fetchAndStoreMeal(meal.strMeal, userId);
+    alert(`Saved ${meal.strMeal} to your saved meals!`);
   };
 
   return (
-    <div className="combined-container">
-      <img src="/Images/foogle-logo.jpg" alt="Foogle Logo" className="logo" />
-
-      {/* Search Bar */}
+    <div className="search-container">
       <input
         type="text"
-        placeholder="Search Foogle..."
+        placeholder="Search for a recipe..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="search-input"
       />
-
-      {/* Search Buttons */}
-      <div className="button-container">
-        <button onClick={handleSearch} className="search-button">Foogle Search</button>
-        <button className="search-button">I'm Feeling Hungry</button>
-      </div>
-
-      {/* Filter Section */}
-      <div className="filter-options">
-        {foodCategories.map((category) => (
-          <label key={category} className="filter-label">
-            <input
-              type="checkbox"
-              value={category}
-              checked={selectedFilters.includes(category)}
-              onChange={() => handleFilterChange(category)}
-            />
-            {category}
-          </label>
-        ))}
-      </div>
-
-      <button onClick={handleSearch} className="filter-button">Apply Filters</button>
-
-      {/* Display Results */}
-      {loading && <p>Loading...</p>}
-      {error && <p className="error">{error}</p>}
+      <button onClick={handleSearch}>Search</button>
 
       <div className="results-container">
         {results.length > 0 ? (
           results.map((meal) => (
             <div key={meal.idMeal} className="meal-card">
-              <img src={meal.strMealThumb} alt={meal.strMeal} className="meal-image" />
+              <img src={meal.strMealThumb} alt={meal.strMeal} />
               <h3>{meal.strMeal}</h3>
-              <p>Category: {meal.strCategory}</p>
+              <button onClick={() => handleSaveMeal(meal)}>Save Meal</button>
             </div>
           ))
         ) : (
-          !loading && <p>No results found.</p>
+          <p>No results found.</p>
         )}
       </div>
     </div>
   );
 };
 
-export default CombinedSearchPage;
+export default SearchPage;

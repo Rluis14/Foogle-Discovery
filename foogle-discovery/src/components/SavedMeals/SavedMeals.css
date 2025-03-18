@@ -1,0 +1,36 @@
+.saved-meals-container {
+    max-width: 800px;
+    margin: auto;
+    text-align: center;
+}
+
+.meals-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.meal-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    max-width: 200px;
+    text-align: center;
+}
+
+.meal-card img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.meal-card h3 {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.meal-card p {
+    font-size: 14px;
+    color: gray;
+}
