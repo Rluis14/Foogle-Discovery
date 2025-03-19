@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './Profile.css';
 import { AuthContext } from '../../context/AuthContext';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -28,7 +28,9 @@ const Profile = () => {
   const location = useLocation();
   const [selectedSection, setSelectedSection] = useState(determineSection(location.pathname));
   const navigate = useNavigate();
-
+  useEffect(() => {
+    setSelectedSection(determineSection(location.pathname));
+  }, [location.pathname]);
   const onClickSection= (section)=>{
     navigate(section.url);
     setSelectedSection(section.type);

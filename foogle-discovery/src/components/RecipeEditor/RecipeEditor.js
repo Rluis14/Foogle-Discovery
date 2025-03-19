@@ -10,9 +10,10 @@ const RecipeEditor = ({
   loading = false,
   recipe,
 }) => {
+  console.log(recipe);
   const [title, setTitle] = useState(recipe?.title||"");
   const [instruction, setInstruction] = useState(recipe?.instruction||"");
-  const [imgSrc, setImgSrc] = useState(recipe?.img||"");
+  const [imgSrc, setImgSrc] = useState(recipe?.imgSrc||"");
   const [ingredients, setIngredients] = useState(recipe?.ingredients||[""]);
   const [selectionArea, setSectionArea] = useState(recipe?.area||"");
   const [category, setCategory] = useState(recipe?.category || "");

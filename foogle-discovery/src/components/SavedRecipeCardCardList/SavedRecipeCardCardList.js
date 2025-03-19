@@ -29,7 +29,7 @@ function SavedRecipeCardCardList() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(async () => {
+  useEffect(() => {
     //fetch here
     // const res = await axios.get(`${baseURL}/favorites`);
     // const recipes = res.data.map((recipe) => ({
@@ -53,7 +53,7 @@ function SavedRecipeCardCardList() {
   const onClickSave = (index, saved) => {
     setData((prev) => {
       const newData = [...prev];
-      newData[index].saved = !saved;
+      newData[index].saved = saved;
       console.log(newData);
       return newData;
     });
@@ -73,7 +73,7 @@ function SavedRecipeCardCardList() {
               key={`${recipe.id} ${recipe.saved}`}
               title={recipe.title}
               rating={recipe.rating}
-              imgSrc={recipe.imgSrc}
+              imgSrc={recipe.img_url}
               username={recipe.username}
               onClickSave={() => onClickSave(index, !recipe.saved)}
               onClick={() => onClick(index)}

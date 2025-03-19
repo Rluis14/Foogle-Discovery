@@ -100,7 +100,7 @@ const Navbar = () => {
           {isLoggedIn ? (
             <div className='user-info'>
               <span>welcome, {username}</span>
-              <button className='username' onClick={()=>navigate('Profile')}>Profile</button>
+              <button className='username' onClick={()=>navigate('Profile/saved_recipes')}>Profile</button>
               <button className='logout' onClick={handleLogout}>Logout</button>
             </div>
           ) : (
