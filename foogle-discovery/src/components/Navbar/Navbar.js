@@ -94,7 +94,7 @@ const Navbar = () => {
 
   return (
     <React.Fragment>
-      <nav>
+      <nav aria-label='Main Navigation' className='navbar'>
         <div className="logo" onClick={() => navigate('')}>Foogle</div>
         <div className="auth-buttons">
           {isLoggedIn ? (
@@ -112,6 +112,44 @@ const Navbar = () => {
         </div>  
       </nav>
       <Outlet />
+
+      <div className="layout-container">
+        {/* Sidebar Navigation */}
+        <aside className="sidebar">
+          <ul>
+            <li onClick={() => navigate('')}>🏠 Home</li>
+            <li onClick={() => navigate('/search')}>🔍 Search</li>
+            <li onClick={() => navigate('/notifications')}>🔔 Notifications</li>
+            <li onClick={() => navigate('/settings')}>⚙️ Settings</li>
+          </ul>
+        </aside>
+
+        {/* Main Content Section */}
+        <main className="main-content">
+          <h2>🍽️ Craving Something Delicious? Find the Perfect Recipe! 🍳</h2>
+          <p>🔍 <strong>Search. Cook. Enjoy.</strong> Whether you're a pro chef or a kitchen newbie, we’ve got the perfect recipe waiting for you!</p>
+          <p>🍕 <strong>Craving a Specific Dish?</strong> Search for it now!</p>
+            <li>🔥 <strong>Why You'll Love Us:</strong></li>
+            <li>✅ Thousands of recipes at your fingertips</li>
+            <li>✅ Easy-to-follow instructions</li>
+            <li>✅ Filters for diet, time, and ingredients</li>
+          
+          <p>🥑 <strong>No idea what to cook?</strong> Let us surprise you with a random recipe!</p>
+          <p>📢 <strong>Start Your Flavor Adventure Now!</strong> 🍕🍰</p>
+          <a href="/search" className="cta-button">🔗 Click Here & Find Your Next Favorite Meal!</a>
+        </main>
+
+        {/* Widgets Section */}
+        <section className="widgets">
+          <h3>📜 Did You Know?</h3>
+          <p>
+            The oldest known cookbook, <strong>Apicius</strong>, dates back to the 4th or 5th century AD in Ancient Rome.
+            It contains recipes for exotic dishes like flamingo! 🦩
+          </p>
+        </section>
+    </div>
+
+
     </React.Fragment>
   );
 };

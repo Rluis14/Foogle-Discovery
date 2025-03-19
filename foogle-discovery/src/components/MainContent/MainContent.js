@@ -6,19 +6,21 @@ const MainContent = () => {
   const navigate = useNavigate();  // Initialize navigate function
 
   return (
-    <div className="main-content">
-      <div className="get-started">
-        <h1>Discover Your Next Favorite Meal</h1>
-        <div className="action-buttons">
-          <button className="search-btn" onClick={() => navigate('/search')}>
-            🔍 Search Recipes
-          </button>
-          <button className="filter-btn" onClick={() => navigate('/filter')}>
-            ⚙️ Filter by Diet
-          </button>
+    <main>
+      <div className="main-content">
+        <div className="get-started">
+          <h1>Discover Your Next Favorite Meal</h1>
+          <div className="action-buttons">
+            <button className="search-btn" onClick={() => navigate('/search')}>
+              🔍 Search Recipes
+            </button>
+            <button className="filter-btn" onClick={() => navigate('/filter')}>
+              ⚙️ Filter by Diet
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

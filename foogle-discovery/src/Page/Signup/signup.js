@@ -89,98 +89,100 @@ const Signup = () => {
   };
 
   return (
-    <div className="auth-container">
-      <form onSubmit={handleSubmit} className="auth-form">
-        <h2>Join Foogle</h2>
-        {error && <div className="error-message">{error}</div>}
+    <section>
+      <div className="auth-container">
+        <form onSubmit={handleSubmit} className="auth-form">
+          <h2>Join Foogle</h2>
+          {error && <div className="error-message">{error}</div>}
 
-        <div className="form-group">
-          <label>Username</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter your username"
-            minLength="4"
-            maxLength="20"
-            pattern="[a-zA-Z0-9_]+"
-            title="Only letters, numbers, and underscores"
-            required
-          />
-          <p className="input-hint">4-20 characters, letters, numbers, and underscores only</p>
-        </div>
-
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              checkPasswordStrength(e.target.value);
-            }}
-            placeholder="Create a password"
-            required
-          />
-
-          <div className="password-meter">
-            {[...Array(4)].map((_, i) => (
-              <div 
-                key={i}
-                className={`strength-bar strength-${passwordScore}`}
-                style={{ 
-                  backgroundColor: getBarColor(passwordScore),
-                  opacity: password ? 1 : 0.3
-                }}
-              ></div>
-            ))}
+          <div className="form-group">
+            <label>Username</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter your username"
+              minLength="4"
+              maxLength="20"
+              pattern="[a-zA-Z0-9_]+"
+              title="Only letters, numbers, and underscores"
+              required
+            />
+            <p className="input-hint">4-20 characters, letters, numbers, and underscores only</p>
           </div>
-          {password && (
-            <div className="strength-text">
-              Password strength: {['Weak', 'Fair', 'Good', 'Strong'][passwordScore]}
+
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                checkPasswordStrength(e.target.value);
+              }}
+              placeholder="Create a password"
+              required
+            />
+
+            <div className="password-meter">
+              {[...Array(4)].map((_, i) => (
+                <div 
+                  key={i}
+                  className={`strength-bar strength-${passwordScore}`}
+                  style={{ 
+                    backgroundColor: getBarColor(passwordScore),
+                    opacity: password ? 1 : 0.3
+                  }}
+                ></div>
+              ))}
             </div>
-          )}
-        </div>
+            {password && (
+              <div className="strength-text">
+                Password strength: {['Weak', 'Fair', 'Good', 'Strong'][passwordScore]}
+              </div>
+            )}
+          </div>
 
-        <div className="form-group">
-          <label>Confirm Password</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm your password"
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm your password"
+              required
+            />
+          </div>
 
-        <button 
-          type="submit" 
-          className="auth-button"
-          disabled={loading}
-        >
-          {loading ? (
-            <div className="spinner"></div>
-          ) : (
-            'Sign Up'
-          )}
-        </button>
-        
-        <div className="auth-link">
-          Already have an account? <Link to="/login">Log in</Link>
-        </div>
-      </form>
-    </div>
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? (
+              <div className="spinner"></div>
+            ) : (
+              'Sign Up'
+            )}
+          </button>
+          
+          <div className="auth-link">
+            Already have an account? <Link to="/login">Log in</Link>
+          </div>
+        </form>
+      </div>
+    </section>
   );
 };
 

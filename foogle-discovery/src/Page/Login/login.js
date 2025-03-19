@@ -68,50 +68,52 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
-      <form onSubmit={handleSubmit} className="auth-form">
-        <h2>Welcome Back to Foogle</h2>
-        {error && <div className="error-message">{error}</div>}
-        
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-          />
-        </div>
+    <section>
+      <div className="auth-container">
+        <form onSubmit={handleSubmit} className="auth-form">
+          <h2>Welcome Back to Foogle</h2>
+          {error && <div className="error-message">{error}</div>}
+          
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+            />
+          </div>
 
-        <button 
-          type="submit" 
-          className="auth-button"
-          disabled={loading}
-        >
-          {loading ? (
-            <div className="spinner"></div>
-          ) : (
-            'Login'
-          )}
-        </button>
-        
-        <div className="auth-link">
-          New user? <Link to="/signup">Create an account</Link>
-        </div>
-      </form>
-    </div>
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? (
+              <div className="spinner"></div>
+            ) : (
+              'Login'
+            )}
+          </button>
+          
+          <div className="auth-link">
+            New user? <Link to="/signup">Create an account</Link>
+          </div>
+        </form>
+      </div>
+    </section>
   );
 };
 

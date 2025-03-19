@@ -103,6 +103,83 @@ h1 {
     transition: transform 0.3s ease;
 }
 
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+.food-image:hover {
+    transform: scale(1.03);
+}
+
+.layout-container {
+    display: grid;
+    grid-template-columns: 250px auto 300px;
+    gap: 20px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+    height: 100%;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.3s ease;
+}
+
+.sidebar ul li:hover {
+    background-color: #ddd;
+}
+
+/* Main Content */
+.main-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Widgets Section */
+.widgets {
+    background-color: #ffeedb;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .layout-container {
+        grid-template-columns: 200px auto;
+    }
+
+    .widgets {
+        display: none; /* Hide widgets on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .layout-container {
+        grid-template-columns: auto;
+    }
+
+    .sidebar {
+        display: none; /* Hide sidebar on small screens */
+    }
+}
+
 @media (max-width: 768px) {
     nav {
         padding: 1rem 5%;
@@ -135,12 +212,4 @@ h1 {
         width: 100%;
         margin: 0.5rem 0;
     }
-}
-
-button:hover {
-    transform: translateY(-2px);
-}
-
-.food-image:hover {
-    transform: scale(1.03);
 }
