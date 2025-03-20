@@ -66,7 +66,7 @@ recipe_router.post("/", TokenVerify_1.verifyToken, UploadManager_1.uploadManager
             created_at: FireBase_1.admin.firestore.FieldValue.serverTimestamp(),
         };
         const docRef = await FireBase_1.default.collection("Recipe").add(newRecipe);
-        res.status(201).json({ message: "Recipe created successfully", id: docRef.id });
+        res.status(201).json({ message: "Recipe created successfully", id: docRef.id, recipe: Object.assign(Object.assign({}, newRecipe), { average_rating: 0 }) });
     }
     catch (error) {
         res.status(500).json({ error: error.message });
@@ -169,17 +169,19 @@ async function calculateAverageRating(recipeId) {
 }
 // Get recipes by combined criteria
 recipe_router.get("/search", async (req, res) => {
-    const { name, category, area } = req.query;
+    const { title, category, area } = req.query;
     try {
         let query = FireBase_1.default.collection("Recipe");
-        if (name) {
-            query = query.where('title', '>=', name).where('title', '<=', name + '~');
+        if (title) {
+            query = query.where('title', '>=', title).where('title', '<=', title + '~');
         }
         if (category) {
-            query = query.where("category", "==", category);
+            const categories = typeof category === 'string' ? category.split(',') : [];
+            query = query.where("category", "in", categories);
         }
         if (area) {
-            query = query.where("area", "==", area);
+            const areas = typeof area === 'string' ? area.split(',') : [];
+            query = query.where("area", "in", areas);
         }
         const snapshot = await query.get();
         const recipes = await Promise.all(snapshot.docs.map(async (doc) => {

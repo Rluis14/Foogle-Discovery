@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
 import zxcvbn from 'zxcvbn';
 import './signup.css';
+import { signUp } from '../../API/api';
+import { AuthContext } from '../../context/AuthContext';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +16,7 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [passwordScore, setPasswordScore] = useState(0);
   const [loading, setLoading] = useState(false);
+  const {user,setUser} = useContext(AuthContext);
   const navigate = useNavigate();
 
   const validateEmail = (email) => {
@@ -39,46 +42,19 @@ const Signup = () => {
       if (!validateEmail(email)) throw new Error('Please enter a valid email address');
       if (password !== confirmPassword) throw new Error('Passwords do not match');
       if (passwordScore < 2) throw new Error('Password is too weak');
-
-      // Firebase operations
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Update profile with username
-      await updateProfile(userCredential.user, {
-        displayName: username
-      });
+      // Firebase operations
+     const [res,error] = await signUp(email,password,username)
+      if(error) throw error;
 
-      // Save user data to Firestore
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        username,
-        email,
-        createdAt: new Date()
-      });
+      setUser(res.user);
+      localStorage.setItem('token', res.token);
 
       navigate('/'); // Redirect after successful signup
-      if (!validateEmail(email)) {
-        throw new Error('Please enter a valid email address');
-      }
-
-      if (password !== confirmPassword) {
-        throw new Error('Passwords do not match');
-      }     
 
     } catch (error) {
       // Error handling
-      switch(error.code) {
-        case 'auth/email-already-in-use':
-          setError('Email already registered');
-          break;
-        case 'auth/weak-password':
-          setError('Password is too weak');
-          break;
-        case 'auth/invalid-email':
-          setError('Invalid email format');
-          break;
-        default:
-          setError(error.message);
-      }
+      setError(error.response?.data?.error || 'Failed to sign up');
     }
     setLoading(false);
   };

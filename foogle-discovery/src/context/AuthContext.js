@@ -5,9 +5,10 @@ export const AuthContext = createContext(null);
 // Auth Provider Component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-
+  
   const logout = () => {
     setUser(null);
+    localStorage.clear();
   };
 
   return (

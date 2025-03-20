@@ -1,7 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyToken = exports.generateToken = void 0;
-const FireBase_1 = require("../FireBase/FireBase");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const key_1 = __importDefault(require("../key"));
 async function verifyToken(req, res, next, required = true) {
     var _a;
     const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split("Bearer ")[1];
@@ -12,7 +16,7 @@ async function verifyToken(req, res, next, required = true) {
         return res.status(401).json({ error: "Unauthorized" });
     }
     try {
-        const decodedToken = await FireBase_1.admin.auth().verifyIdToken(token);
+        const decodedToken = jsonwebtoken_1.default.verify(token, key_1.default);
         req.user = decodedToken;
         return next();
     }
@@ -21,10 +25,9 @@ async function verifyToken(req, res, next, required = true) {
     }
 }
 exports.verifyToken = verifyToken;
-async function generateToken(id) {
+async function generateToken(id, user_name) {
     try {
-        const user = await FireBase_1.admin.auth().getUser(id);
-        const token = await FireBase_1.admin.auth().createCustomToken(id, { displayName: user.displayName });
+        const token = jsonwebtoken_1.default.sign({ uid: id, user_name }, key_1.default, { expiresIn: "5h" });
         return token;
     }
     catch (error) {

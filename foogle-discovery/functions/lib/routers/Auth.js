@@ -7,10 +7,12 @@ const express_1 = require("express");
 const FireBase_1 = require("../FireBase/FireBase");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const FireBase_2 = __importDefault(require("../FireBase/FireBase")); // Assuming you have a Firestore instance exported from FireBase file
+const TokenVerify_1 = require("../middleware/TokenVerify");
 const auth_router = (0, express_1.Router)();
 // Register a new user
 auth_router.post("/sign_up", async (req, res) => {
     const { email, password, user_name } = req.body;
+    console.log(email, password, user_name);
     try {
         const hashedPassword = await bcrypt_1.default.hash(password, 10);
         const userRecord = await FireBase_1.auth.createUser({
@@ -24,7 +26,7 @@ auth_router.post("/sign_up", async (req, res) => {
             password: hashedPassword,
             saved_recipe_ids: [],
         });
-        const token = await FireBase_1.auth.createCustomToken(userRecord.uid, { user_name });
+        const token = (0, TokenVerify_1.generateToken)(userRecord.uid, user_name);
         res.status(201).json({
             message: "User registered successfully",
             token,
@@ -35,6 +37,7 @@ auth_router.post("/sign_up", async (req, res) => {
         });
     }
     catch (error) {
+        console.log(error);
         if (error.code === 'auth/email-already-exists') {
             res.status(400).json({ error: "Email already exists" });
         }
@@ -47,6 +50,7 @@ auth_router.post("/sign_up", async (req, res) => {
 auth_router.post("/login", async (req, res) => {
     var _a;
     const { email, password } = req.body;
+    console.log(email, password);
     try {
         const user = await FireBase_1.auth.getUserByEmail(email);
         const userDoc = await FireBase_2.default.collection('User').doc(user.uid).get();
@@ -57,7 +61,7 @@ auth_router.post("/login", async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ error: "Invalid email or password" });
         }
-        const token = await FireBase_1.auth.createCustomToken(user.uid, { user_name: user.displayName });
+        const token = (0, TokenVerify_1.generateToken)(user.uid, user.displayName || " ");
         res.status(200).json({
             message: "User signed in successfully",
             user: {
@@ -68,7 +72,7 @@ auth_router.post("/login", async (req, res) => {
         });
     }
     catch (error) {
-        res.status(500).json({ error: "An unknown error occurred" });
+        return res.status(401).json({ error: "Invalid email or password" });
     }
     return;
 });
