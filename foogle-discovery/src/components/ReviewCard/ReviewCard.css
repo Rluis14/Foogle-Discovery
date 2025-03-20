@@ -47,23 +47,3 @@
     font-size: 0.9em;
     color: #6c757d;
   }
-  .edit_icon_img{
-    width: 24px;
-    height: 24px;
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-  }
-  .edit_icon_container{
-    cursor: pointer;
-    width:35px;
-    height: 35px;
-    border-radius: 50%;
-    border: 1px solid black;
-    background-color: white;
-    position: absolute;
-    overflow: hidden;
-    top: 10px;
-    right:10px;
-  }

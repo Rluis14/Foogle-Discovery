@@ -1,0 +1,19 @@
+.icon_container{
+    cursor: pointer;
+    width:35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid black;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+.icon_img{
+    width: 24px;
+    height: 24px;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}

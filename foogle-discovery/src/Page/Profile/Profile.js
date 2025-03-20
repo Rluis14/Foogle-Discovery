@@ -15,7 +15,7 @@ const sections = [
     url:'created_recipes'
   },
   {
-    type: 'reviews',
+    type: 'review',
     name: 'User\'s Review',
     url:'review',
   }

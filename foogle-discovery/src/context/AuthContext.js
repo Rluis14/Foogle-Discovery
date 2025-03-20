@@ -6,12 +6,7 @@ export const AuthContext = createContext(null);
 // Auth Provider Component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      setUser(user);
-    }
-  }
-  );
+  
   const logout = () => {
     setUser(null);
   };
